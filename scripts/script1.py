@@ -39,13 +39,12 @@ c = conn.cursor()
 
 
 allData = pd.read_pickle("allData.pk1")
-
 # allData["pickup_datetime"] = pd.to_datetime(allData["pickup_datetime"])
 # allData["dropoff_datetime"] = pd.to_datetime(allData["dropoff_datetime"])
-allData["pickup_dayofmonth"] = allData.pickup_datetime.dt.day
+# allData["pickup_dayofmonth"] = allData.pickup_datetime.dt.day
 # print("concat is complete!")
 
-allData.to_pickle('allData.pk1')
+# allData.to_pickle('allData.pk1')
 # print("saving to pickle file is complete!")
 
 # allData.to_sql('newTrips', con=conn, if_exists='append', chunksize=1000)
@@ -56,8 +55,8 @@ allData.to_pickle('allData.pk1')
 # r3 = c.execute("select distinct pickup_month, distinct count(id) from newTrips \
 #     where payment_type in ('Cas', 'CAS','Cash','CASH', 'CSH') group by pickup_month \
 #         order by pickup_month asc").fetchall()
-r = c.execute
 # print('sql query result is:\n', '\nQuestion 1\n',
 #       r1, '\nQuestion 2\n',  r2, '\nQuestion 3\n', r3)
-
+# r4 = c.execute("select pickup_month, count(id) from newTrips where pickup_datetime >= '2012-8-01 00:00:00'")
+# print(r4.fetchall())
 # allData[allData["payment_type"].isin(['Cas', 'CAS','Cash','CASH', 'CSH'])]
