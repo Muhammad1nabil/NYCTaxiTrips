@@ -1,7 +1,12 @@
 import pandas as pd
+pd.options.mode.chained_assignment = None
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
+import pickle
+from statistics import mean
+from sklearn import linear_model
+from sklearn.model_selection import train_test_split
 
 # d = pd.concat(
 #     pd.read_json("data09.json", lines=True, chunksize=1000))
@@ -103,7 +108,7 @@ data09 = pd.read_pickle('data09.pk1')
 # data['charge'] = data09['tolls_amount'] + data09['fare_amount']
 # data.to_pickle('data.pk1')
 
-data = pd.read_pickle('data.pk1')
+# data = pd.read_pickle('data.pk1')
 
 
 def great_circle_distance(lon1, lat1, lon2, lat2):
@@ -131,26 +136,3 @@ data['distance'] = great_circle_distance(
 
 # data.to_pickle('data.pk1')
 
-from sklearn import linear_model
-from sklearn.model_selection import train_test_split
-
-reg = linear_model.LinearRegression()
-
-x_train, x_test, y_train, y_test = train_test_split(
-    data['distance'], data['charge'], test_size=0.33, random_state=42)
-
-print(x_train.shape)
-print(y_train.shape)
-print(x_test.shape)
-print(x_test.shape)
-
-reg.fit(x_train, y_train)
-
-print(reg.score())
-
-# print(Q1)
-# print()
-# print(Q2)
-# plt.figure(figsize=(12, 8))
-# plt.hist(Q3)
-# plt.show()
