@@ -4,6 +4,7 @@ this repo is a answer for technical test as described
 it has scripts folder contains all python scripts and created database from json files and also pickle files generated from json files to speed debugging/developing process. -no data included here becuz of its size- also analysis.html file
 
 ## folder Tree
+```
 NYCTaxiTrips>
 
 ----env>
@@ -35,7 +36,7 @@ NYCTaxiTrips>
 --------data11.pk1
 
 --------data12.pk1
-
+```
 ## Packages
 
 this repo developed in virtual environment which has its own packages:
