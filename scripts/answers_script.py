@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import sys
 import os
 
-conn = sqlite3.connect('test.db')
+conn = sqlite3.connect('db.sqlite')
 c = conn.cursor()
 
 # save_to_db function to load data from json file or pickle file based on picklef flag
@@ -31,16 +31,16 @@ def save_to_db(fileName, picklef=True):
     # data.to_sql('Trips', con=conn, if_exists='append', chunksize=1000)
     
 # saving data in pickle files to save time while developing/debugging
-# for i in range(len(sys.argv) - 1):
-#     fn = sys.argv[i+1]
-#     if not fn.endswith('pk1'):
-#         print('[+] loading json file: ', fn)
-#         save_to_db(fn, False)
-#         print('[+]', fn, 'saved successfully into the database')
-#     else:
-#         print('[+] loading pickle file: ', fn)
-#         save_to_db(fn)
-#         print('[+]', fn, 'saved successfully into the database')
+for i in range(len(sys.argv) - 1):
+    fn = sys.argv[i+1]
+    if not fn.endswith('pk1'):
+        print('[+] loading json file: ', fn)
+        save_to_db(fn, False)
+        print('[+]', fn, 'saved successfully into the database')
+    else:
+        print('[+] loading pickle file: ', fn)
+        save_to_db(fn)
+        print('[+]', fn, 'saved successfully into the database')
 # os._exit(0)
 
 
