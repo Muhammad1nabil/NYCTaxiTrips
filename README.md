@@ -169,7 +169,7 @@ and also a figure with bar chart showing avg for all week days and Saturday-Sund
 this query get number of trips each day to presented it as time series chart.
 as we see the data is missing the last 4 days of October 2012 and as I mentioned that data hasn't Nov and Dec data so the last 3 months this data has are Aug-Sep-Oct so the time series begins from 2012-08-01 to 2012-10-27.
 
-The chart shows significant change events happened. those changes is a peak (high/low) and mainly around end of the week (Friday)
+The chart shows significant change events happened. those changes is a peak (high/low) and mainly around end of the week (Friday).
 
 ### Sixth Query
 ```SQL
@@ -193,6 +193,14 @@ group by hour
 this is hourly distribution of trips across the day. also shows similar numbers all the day which is strange that number of trips in mid day almost equals mid night.
 
 The script generates a bar chart to display this data to be more visual.
+
+## Draft scripts
+
+### draft_script1.py
+this script is doing the same as answer_script.py without queries but using pandas package.
+
+### draft_script2.py
+this script is a try to solve a regression problem to predict fare amount(inclusive tolls) from pickup and dropoff locations.
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
