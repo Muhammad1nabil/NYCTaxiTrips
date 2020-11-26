@@ -1,138 +1,121 @@
+#!/usr/bin/python
+
+import warnings
+warnings.simplefilter(action='ignore', category=UserWarning)
 import pandas as pd
-pd.options.mode.chained_assignment = None
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 import pickle
-from statistics import mean
-from sklearn import linear_model
-from sklearn.model_selection import train_test_split
 
 # d = pd.concat(
 #     pd.read_json("data09.json", lines=True, chunksize=1000))
 
 ################# loading data func #################
+
+# all data saved to pickle files from another script 
+# to save time loading it and while developing/debugging process
+
 data09 = pd.read_pickle('data09.pk1')
-# data10 = pd.read_pickle('data10.pk1')
-# data11 = pd.read_pickle('data11.pk1')
-# data12 = pd.read_pickle('data12.pk1')
+data10 = pd.read_pickle('data10.pk1')
+data11 = pd.read_pickle('data11.pk1')
+data12 = pd.read_pickle('data12.pk1')
 
+# allData = pd.read_pickle('allData.pk1')
+
+data09['pickup_datetime'] = pd.to_datetime(data09['pickup_datetime'])
+data10['pickup_datetime'] = pd.to_datetime(data10['pickup_datetime'])
+data11['pickup_datetime'] = pd.to_datetime(data11['pickup_datetime'])
+data12['pickup_datetime'] = pd.to_datetime(data12['pickup_datetime'])
+# allData['pickup_datetime'] = pd.to_datetime(allData['pickup_datetime'])
 ################# Question 1 #################
-# Q1 = data09[data09['passenger_count'] <= 2]['trip_distance'].mean()
-# Q1 += data10[data10['passenger_count'] <= 2]['trip_distance'].mean()
-# Q1 += data11[data11['passenger_count'] <= 2]['trip_distance'].mean()
-# Q1 += data12[data12['passenger_count'] <= 2]['trip_distance'].mean()
-# Q1 /= 4
 
+# concatinating to calculate the answer from 4 years data
+
+# calculating the average distance traveled by trips with a maximum of 2 passengers
+# Q1 = allData[allData['passenger_count'] <= 2]['trip_distance'].agg('mean')
+
+Q1 = data09[data09['passenger_count'] <= 2]['trip_distance'].agg('mean')
+Q1 += data10[data10['passenger_count'] <= 2]['trip_distance'].agg('mean')
+Q1 += data11[data11['passenger_count'] <= 2]['trip_distance'].agg('mean')
+Q1 += data12[data12['passenger_count'] <= 2]['trip_distance'].agg('mean')
+Q1 /= 4
+# format to show only 2 digits after the dot
+print('Avrage trip distance for trips with a max of 2 passengers: {:.2f}'.format(Q1), 'KM\n')
 ################# Question 2 #################
-# Q2 = data09.groupby(['vendor_id'])['total_amount'].agg(
-#     'sum').sort_values(ascending=False).head(3)
-# Q2 += data10.groupby(['vendor_id']
-#                      )['total_amount'].agg('sum').sort_values(ascending=False).head(3)
-# Q2 += data11.groupby(['vendor_id']
-#                      )['total_amount'].agg('sum').sort_values(ascending=False).head(3)
-# Q2 += data12.groupby(['vendor_id']
-#                      )['total_amount'].agg('sum').sort_values(ascending=False).head(3)
-# Q2 = list(Q2.index)
+# Q2 = allData.groupby(['vendor_id'])['total_amount'].agg('sum').sort_values(ascending=False).head(3)
 
+# getting the 3 biggest vendors based on the total amount of money raised 
+Q2 = data09.groupby(['vendor_id']
+                     )['total_amount'].agg('sum').sort_values(ascending=False).head(3)
+Q2 += data10.groupby(['vendor_id']
+                     )['total_amount'].agg('sum').sort_values(ascending=False).head(3)
+Q2 += data11.groupby(['vendor_id']
+                     )['total_amount'].agg('sum').sort_values(ascending=False).head(3)
+Q2 += data12.groupby(['vendor_id']
+                     )['total_amount'].agg('sum').sort_values(ascending=False).head(3)
 
-# data09["pickup_datetime"] = pd.to_datetime(data09["pickup_datetime"])
+print('top 3 vendors based on total money raied in order: \n')
+for i in range(len(Q2)):
+    print(i+1, '-', Q2.index[i], '{:.2f}'.format(Q2[i]))
+print()
+# bar chart to show top 3 vendors
+
 ################# Question 3 #################
-# hanshel dah we n7ot to_datetime fo2 le kolo b2a
-# data09['pickup_datetime'] = pd.DatetimeIndex(data09['pickup_datetime'])
-# per09 = data09.pickup_datetime.dt.to_period("M")
-# p = data09.pickup_datetime.dt.to_period("D")
-# data10['pickup_datetime'] = pd.DatetimeIndex(data10['pickup_datetime'])
-# per10 = data10.pickup_datetime.dt.to_period("M")
-# data11['pickup_datetime'] = pd.DatetimeIndex(data11['pickup_datetime'])
-# per11 = data11.pickup_datetime.dt.to_period("M")
-# data12['pickup_datetime'] = pd.DatetimeIndex(data12['pickup_datetime'])
-# per12 = data12.pickup_datetime.dt.to_period("M")
-# g = data09.groupby(p)['trip_distance'].agg('count')
+# casting pickup_datetime from datetime format to month
+per09 = data09.pickup_datetime.dt.to_period("M")
+per10 = data10.pickup_datetime.dt.to_period("M")
+per11 = data11.pickup_datetime.dt.to_period("M")
+per12 = data12.pickup_datetime.dt.to_period("M")
 
-# result = pd.concat([
-    # data09[data09['payment_type'].isin(['Cas', 'CAS', 'Cash', 'CASH', 'CSH'])].groupby(
-    #     per09)['trip_distance'].agg('count'),
-#     data10[data10['payment_type'].isin(['Cas', 'CAS', 'Cash', 'CASH', 'CSH'])].groupby(
-#         per10)['trip_distance'].agg('count'),
-#     data11[data11['payment_type'].isin(['Cas', 'CAS', 'Cash', 'CASH', 'CSH'])].groupby(
-#         per11)['trip_distance'].agg('count'),
-#     data12[data12['payment_type'].isin(['Cas', 'CAS', 'Cash', 'CASH', 'CSH'])].groupby(
-#         per12)['trip_distance'].agg('count')
-# ])
-# Q3 = {"month": list(result.index.to_series().astype(str)),
-#       "trips": list(result)}
-# Q3 = pd.DataFrame(Q3, columns=['month', 'trips'])
-# Q3.set_index('month', inplace=True)
-
+# calculating a monthly distribution over 4 years of rides paid with cash
+# count trips can be done by using count on any column as it's only counting records(trips)
+result = pd.concat([
+    data09[data09['payment_type'].isin(['Cas', 'CAS', 'Cash', 'CASH', 'CSH'])].groupby(
+        per09)['trip_distance'].agg('count'),
+    data10[data10['payment_type'].isin(['Cas', 'CAS', 'Cash', 'CASH', 'CSH'])].groupby(
+        per10)['trip_distance'].agg('count'),
+    data11[data11['payment_type'].isin(['Cas', 'CAS', 'Cash', 'CASH', 'CSH'])].groupby(
+        per11)['trip_distance'].agg('count'),
+    data12[data12['payment_type'].isin(['Cas', 'CAS', 'Cash', 'CASH', 'CSH'])].groupby(
+        per12)['trip_distance'].agg('count')
+])
+Q3 = {"month": list(result.index.values),
+      "trips": result.values}
+Q3 = pd.DataFrame(Q3, columns=['month', 'trips'])
+Q3.set_index('month', inplace=True)
+print('no. trips in each month:\n',Q3, '\n')
 ################# Question 4 #################
-# data09['pickup_datetime'] = pd.DatetimeIndex(data09['pickup_datetime'])
-# per09 = data09.pickup_datetime.dt.to_period("D")
-# data10['pickup_datetime'] = pd.DatetimeIndex(data10['pickup_datetime'])
-# per10 = data10.pickup_datetime.dt.to_period("D")
-# data11['pickup_datetime'] = pd.DatetimeIndex(data11['pickup_datetime'])
-# per11 = data11.pickup_datetime.dt.to_period("D")
-# data12['pickup_datetime'] = pd.DatetimeIndex(data12['pickup_datetime'])
-# per12 = data12.pickup_datetime.dt.to_period("D")
+per09 = data09.pickup_datetime.dt.to_period("D")
+per10 = data10.pickup_datetime.dt.to_period("D")
+per11 = data11.pickup_datetime.dt.to_period("D")
+per12 = data12.pickup_datetime.dt.to_period("D")
 
-# result = pd.concat([
-#     data09.groupby(per09)['trip_distance'].agg('count'),
-#     data10.groupby(per10)['trip_distance'].agg('count'),
-#     data11.groupby(per11)['trip_distance'].agg('count'),
-#     data12.groupby(per12)['trip_distance'].agg('count'),
-# ])
+result = pd.concat([
+    data09.groupby(per09)['trip_distance'].agg('count'),
+    data10.groupby(per10)['trip_distance'].agg('count'),
+    data11.groupby(per11)['trip_distance'].agg('count'),
+    data12.groupby(per12)['trip_distance'].agg('count'),
+])
 
-# Q4 = {"day": list(result.index.to_series().astype(str)), "trips": list(result)}
-# Q4 = pd.DataFrame(Q4, columns=['day', 'trips'])
-# Q4.set_index('day', inplace=True)
+Q4 = {"day": result.index.values, "trips": result.values}
+Q4 = pd.DataFrame(Q4, columns=['day', 'trips'])
+Q4.set_index('day', inplace=True)
 # plt.plot(Q4)
 # plt.show()
-
+print('no. trips in each day for the last 3 months of 2012\n', Q4, '\n')
 ################# Bonus 1 #################
-# data09["pickup_datetime"] = pd.to_datetime(data09["pickup_datetime"])
-# data09["dropoff_datetime"] = pd.to_datetime(data09["dropoff_datetime"])
-# data09["pickup_weekday_name"] = data09['pickup_datetime'].dt.day_name()
-# data09["trip_duration"] = (
-#     data09['dropoff_datetime'] - data09['pickup_datetime']).values.astype(np.int64)
+data09["dropoff_datetime"] = pd.to_datetime(data09["dropoff_datetime"])
+data09["pickup_weekday_name"] = data09['pickup_datetime'].dt.day_name()
+data09["trip_duration"] = (
+    data09['dropoff_datetime'] - data09['pickup_datetime']).values.astype(np.int64)
 
-# avgSatSun = pd.to_timedelta(data09[data09['pickup_weekday_name'].isin(
-#     ['Saturday', 'Sunday'])].groupby(
-#         'pickup_weekday_name').mean().trip_duration)
-# print(avgSatSun)
+avgTripsSatSun = pd.to_timedelta(data09[data09['pickup_weekday_name'].isin(
+    ['Saturday', 'Sunday'])].groupby(
+        'pickup_weekday_name')['trip_duration'].agg('mean'))
 
+print('Avrage no. Trips at Saturdays and Sundays\n')
 
-################# bonus 4 #################
-# data  = data09[[
-#     'pickup_longitude', 'pickup_latitude', 'dropoff_longitude', 'dropoff_latitude',
-#     ]]
-# data['charge'] = data09['tolls_amount'] + data09['fare_amount']
-# data.to_pickle('data.pk1')
-
-# data = pd.read_pickle('data.pk1')
-
-
-def great_circle_distance(lon1, lat1, lon2, lat2):
-    R = 6371000  # Approximate mean radius of earth (in m)
-
-    # Convert decimal degrees to ridians
-    lon1, lat1, lon2, lat2 = map(np.radians, [lon1, lat1, lon2, lat2])
-
-    # Distance of lons and lats in radians
-    dis_lon = lon2 - lon1
-    dis_lat = lat2 - lat1
-
-    # Haversine implementation
-    a = np.sin(dis_lat/2)**2 + np.cos(lat1) * \
-        np.cos(lat2) * np.sin(dis_lon/2)**2
-    c = 2*np.arctan2(np.sqrt(a), np.sqrt(1-a))
-    dis_m = R*c  # Distance in meters
-    dis_km = dis_m/1000  # Distance in km
-    return dis_km
-
-
-data['distance'] = great_circle_distance(
-    data.pickup_longitude, data.pickup_latitude, data.dropoff_longitude,
-     data.dropoff_latitude)
-
-# data.to_pickle('data.pk1')
-
+for i in range(2):
+    print('-', avgTripsSatSun.index[i], '{:.2f}'.format(avgTripsSatSun[i]/pd.Timedelta(minutes=1)), 'min')
+print()
